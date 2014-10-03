@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Github Hack Project</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+</head>
+<body>
+	<h1>Github Hax!</h1>
+
+<script>
+
+$(function(){
+	var commitCount = 0;
+
+	var ajaxCall = function(pageNumber) {
+		var githubApiCall = 'https://api.github.com/users/zachlysobey/events?page=' + pageNumber;
+		return $.ajax({ url: githubApiCall }).success(function(response){
+			var filteredEvents = $.grep(response, function(n) {
+				return n['type'] === 'PushEvent';
+			});
+			filteredEvents.forEach(function(pushEvent){
+				var commits = pushEvent.payload.commits.length;
+				commitCount += commits;
+				console.log(commits);
+			});
+		});
+	};
+
+	var i = 1;
+	$.when(ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++)).done(function(){
+		alert(commitCount);
+	});
+
+});
+
+</script>
+</body>
+</html>

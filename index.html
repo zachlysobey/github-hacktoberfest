@@ -13,8 +13,8 @@
 $(function(){
 	var commitCount = 0;
 
-	var ajaxCall = function(pageNumber) {
-		var githubApiCall = 'https://api.github.com/users/zachlysobey/events?page=' + pageNumber;
+	var ajaxCall = function(name, pageNumber) {
+		var githubApiCall = 'https://api.github.com/users/'+name+'/received_events/public?page=' + pageNumber;
 		return $.ajax({ url: githubApiCall }).success(function(response){
 			var filteredEvents = $.grep(response, function(n) {
 				return n['type'] === 'PushEvent';
@@ -22,13 +22,17 @@ $(function(){
 			filteredEvents.forEach(function(pushEvent){
 				var commits = pushEvent.payload.commits.length;
 				commitCount += commits;
-				console.log(commits);
+				console.log(pushEvent, commits);
 			});
 		});
 	};
 
-	var i = 1;
-	$.when(ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++), ajaxCall(i++)).done(function(){
+	var deferredObjects = [];
+	for (var i = 1; i <= 10; i++){
+		deferredObjects.push(ajaxCall('zachlysobey', i));
+	}
+
+	$.when.apply($, deferredObjects).done(function(){
 		alert(commitCount);
 	});
 

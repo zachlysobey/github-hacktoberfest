@@ -13,26 +13,44 @@
 $(function(){
 	var commitCount = 0;
 
-	var ajaxCall = function(name, pageNumber) {
-		var githubApiCall = 'https://api.github.com/users/'+name+'/received_events/public?page=' + pageNumber;
+	var eventAPICallForUserNameAndPageNumber = function(name, pageNumber) {
+		var githubApiCall = 'https://api.github.com/users/'+name+'/events/public?page=' + pageNumber;
 		return $.ajax({ url: githubApiCall }).success(function(response){
-			var filteredEvents = $.grep(response, function(n) {
-				return n['type'] === 'PushEvent';
-			});
-			filteredEvents.forEach(function(pushEvent){
-				var commits = pushEvent.payload.commits.length;
-				commitCount += commits;
-				console.log(pushEvent, commits);
-			});
+			var pushEvents = filterEventsByType(response, 'PushEvent')
+			getNumberOfCommitsFor(pushEvents);
 		});
 	};
 
-	var deferredObjects = [];
-	for (var i = 1; i <= 10; i++){
-		deferredObjects.push(ajaxCall('zachlysobey', i));
-	}
+	var filterEventsByType = function(events, eventType){
+		var filterEvents = []
+		$.grep(events, function(n) {
+				 if (n['type'] === eventType){
+				 	filterEvents.push(n)
+				 };
+			});	
+		return filterEvents
+	};
 
-	$.when.apply($, deferredObjects).done(function(){
+
+
+	var getNumberOfCommitsFor = function(githubEvents)
+	{
+		githubEvents.forEach(function(githubEvent){
+				var commits = githubEvent.payload.commits.length;
+				commitCount += commits;
+				console.log(githubEvent, commits);
+			});	
+	};
+
+	var getNumberOfPushCommitsForUser = function(userName){
+		var deferredObjects = [];
+	for (var pageNumber = 1; pageNumber <= 10; pageNumber++){
+		deferredObjects.push(eventAPICallForUserNameAndPageNumber(userName, pageNumber));
+		}
+		return deferredObjects
+	};
+
+	$.when.apply($, getNumberOfPushCommitsForUser('zachlysobey')).done(function(){
 		alert(commitCount);
 	});
 

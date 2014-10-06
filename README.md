@@ -4,7 +4,7 @@
 
  - zachlysobey
  - KrishnaRSampath
- - mconklin2496
+ - mconklin
  - AmundsenJunior
 
 This project will eventually let the end user type in a gitHub username

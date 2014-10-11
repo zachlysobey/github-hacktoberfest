@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Github Hack Project</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+</head>
+<body>
+	<h1>Github Hax!</h1>
+
+<script>
+	
+	$(function(){
+
+
+		var getReposForUsername = function(username, pageNumber){
+			var userRepoBaseURL = 'http://api.github.com/users/'+username+'/repos';
+		return $.ajax({ url: userRepoBaseURL });
+
+		};
+
+	});
+
+
+	// // GET record for a user
+	// var userRepos = GET http://api.github.com/users/KrishnaRSampath/repos
+
+	// // GET subscriptions - list repos you subscribe to
+	// var subscribedRepos = GET http://api.github.com/users/:username/subscriptions
+
+
+	// var repoCommits = http://api.github.com/repos/:username/:reponame
+
+	// // All commits for a given subscribed repo
+	// var subscribedRepoCommits = http://api.github.com/repos/:owner/:reponame/commits
+
+	// // Get all repos for a user
+	// // Count commits in all of those repos, filtered by user, add to allCommits
+
+	// // Get all subscribed repos for a given user
+	// // Get all commits in each repo, filtered by user, and add to allCommits
+
+
+
+
+
+	// Take allCommits and filter by date (between 10-1 and 10-31-2014, inclusive)
+
+
+</script>
+</body>
+</html>

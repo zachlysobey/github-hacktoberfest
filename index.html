@@ -8,5 +8,19 @@
 </head>
 <body>
 	<h1>Github Hax!</h1>
+
+	<label for="user">
+		User: 
+		<input type="text" name="user" placeholder="github user name" value="zachlysobey" />
+	</label>
+
+	<button data-js-hook="update">Update</button>
+
+	<div class="output" data-js-hook="output" hidden>
+		<span data-js-hook="user" class="user"></span> 
+		commits
+		<span data-js-hook="commits" class="commits"></span>
+	</div>
+
 </body>
 </html>

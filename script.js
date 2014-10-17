@@ -1,6 +1,6 @@
 
 $(function(){
-    var MAX_PAGES = 3; // 10 is the max
+    var MAX_PAGES = 10; // 10 is the max
 
     var $user = $('[data-js-hook="user"]');
     var $commits = $('[data-js-hook="commits"]');
@@ -9,6 +9,16 @@ $(function(){
     var $output = $('[data-js-hook="output"]');
 
     var commitCount = 0;
+
+    $updateButton.click(function() {
+        commitCount = 0;
+        $output.show();
+        console.log('updateButton clicked');
+        $.when.apply($, getNumberOfPushCommitsForUser(getUserName())).done(function(){
+            console.log('deffered has resolved', commitCount);
+            $commits.html(commitCount);
+        });  
+    });
 
     function getUserName() {
         console.log('getUserName()');
@@ -53,14 +63,5 @@ $(function(){
         }
         return deferredObjects
     };
-
-    $updateButton.click(function() {
-        $output.show();
-        console.log('updateButton clicked');
-        $.when.apply($, getNumberOfPushCommitsForUser(getUserName())).done(function(){
-            console.log('deffered has resolved', commitCount);
-            $commits.html(commitCount);
-        });  
-    });
 
 });

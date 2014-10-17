@@ -1,14 +1,9 @@
 
 $(function() {
     var MAX_PAGES = 10; // 10 is the max
-
-    var $user = $('[data-js-hook="user"]');
-    var $commits = $('[data-js-hook="commits"]');
-    var $userInput = $('[name="user"]');
-    var $updateButton = $('[data-js-hook="update"]');
-    var $output = $('[data-js-hook="output"]');
-
     var commitCount = 0;
+    
+    var $updateButton = $('[data-js-hook="update"]');
 
     $updateButton.click(function() {
         initialize();
@@ -17,6 +12,7 @@ $(function() {
     });
 
     function initialize() {
+        var $output = $('[data-js-hook="output"]');
         commitCount = 0;
         $output.show();
     }
@@ -41,6 +37,9 @@ $(function() {
     }
 
     function getUserName() {
+        var $user = $('[data-js-hook="user"]');
+        var $userInput = $('[name="user"]');
+
         var userName = $userInput.val()
         $user.html(userName);
         return userName;
@@ -48,9 +47,9 @@ $(function() {
 
     function filterEventsByType(events, eventType) {
         var filterEvents = []
-        $.grep(events, function(n) {
-            if (n['type'] === eventType){
-                filterEvents.push(n)
+        $.grep(events, function(event) {
+            if (event['type'] === eventType){
+                filterEvents.push(event)
             };
         }); 
         return filterEvents
@@ -65,6 +64,7 @@ $(function() {
     }
 
     function updateCommitCount() {
+        var $commits = $('[data-js-hook="commits"]');
         $commits.html(commitCount);
     }
 

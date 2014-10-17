@@ -1,13 +1,19 @@
 
 $(function() {
-    var MAX_PAGES = 10; // 10 is the max
+
+    /**
+     * 10 is the maximimum pagination of events endpoint. 
+     * With 30 results each, no more than 300 events can be processed 
+     */
+    var MAX_PAGES = 10; 
+    
     var commitCount = 0;
     
     var $updateButton = $('[data-js-hook="update"]');
 
     $updateButton.click(function() {
-        initialize();
         var defferedObjects = sendAjaxRequestsForGithubUserEvents(getUserName());
+        initialize();
         $.when.apply($, defferedObjects).done(updateCommitCount);  
     });
 
@@ -27,7 +33,7 @@ $(function() {
 
     function eventAPICallForUserNameAndPageNumber(pageNumber) {      
         return $.ajax(buildGithubApiCallUrl(pageNumber)).success(function(response){
-            var pushEvents = filterEventsByType(response, 'PushEvent')
+            var pushEvents = filterEventsByType(response, 'PushEvent');
             getNumberOfCommitsFor(pushEvents);
         });
     }
@@ -39,7 +45,6 @@ $(function() {
     function getUserName() {
         var $user = $('[data-js-hook="user"]');
         var $userInput = $('[name="user"]');
-
         var userName = $userInput.val()
         $user.html(userName);
         return userName;
@@ -48,8 +53,8 @@ $(function() {
     function filterEventsByType(events, eventType) {
         var filterEvents = []
         $.grep(events, function(event) {
-            if (event['type'] === eventType){
-                filterEvents.push(event)
+            if (event['type'] === eventType) {
+                filterEvents.push(event);
             };
         }); 
         return filterEvents
@@ -67,5 +72,4 @@ $(function() {
         var $commits = $('[data-js-hook="commits"]');
         $commits.html(commitCount);
     }
-
 });

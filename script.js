@@ -1,5 +1,5 @@
 
-$(function(){
+$(function() {
     var MAX_PAGES = 10; // 10 is the max
 
     var $user = $('[data-js-hook="user"]');
@@ -11,31 +11,42 @@ $(function(){
     var commitCount = 0;
 
     $updateButton.click(function() {
-        commitCount = 0;
-        $output.show();
-        console.log('updateButton clicked');
-        $.when.apply($, getNumberOfPushCommitsForUser(getUserName())).done(function(){
-            console.log('deffered has resolved', commitCount);
-            $commits.html(commitCount);
-        });  
+        initialize();
+        var defferedObjects = sendAjaxRequestsForGithubUserEvents(getUserName());
+        $.when.apply($, defferedObjects).done(updateCommitCount);  
     });
 
-    function getUserName() {
-        console.log('getUserName()');
-        return $userInput.val();
+    function initialize() {
+        commitCount = 0;
+        $output.show();
     }
 
-    function eventAPICallForUserNameAndPageNumber(name, pageNumber) {
-        console.log('eventAPICallForUserNameAndPageNumber()');
-        var githubApiCall = 'https://api.github.com/users/' + name + '/events/public?page=' + pageNumber;
-        return $.ajax({ url: githubApiCall }).success(function(response){
+    function sendAjaxRequestsForGithubUserEvents() {
+        var deferredObjects = [];
+        for (var pageNumber = 1; pageNumber <= MAX_PAGES; pageNumber++) {
+            deferredObjects.push(eventAPICallForUserNameAndPageNumber(pageNumber));
+        }
+        return deferredObjects
+    }
+
+    function eventAPICallForUserNameAndPageNumber(pageNumber) {      
+        return $.ajax(buildGithubApiCallUrl(pageNumber)).success(function(response){
             var pushEvents = filterEventsByType(response, 'PushEvent')
             getNumberOfCommitsFor(pushEvents);
         });
-    };
+    }
+
+    function buildGithubApiCallUrl(pageNumber) {
+        return 'https://api.github.com/users/' + getUserName() + '/events/public?page=' + pageNumber;
+    }
+
+    function getUserName() {
+        var userName = $userInput.val()
+        $user.html(userName);
+        return userName;
+    }
 
     function filterEventsByType(events, eventType) {
-        console.log('filterEventsByType()');
         var filterEvents = []
         $.grep(events, function(n) {
             if (n['type'] === eventType){
@@ -43,25 +54,18 @@ $(function(){
             };
         }); 
         return filterEvents
-    };
+    }
 
     function getNumberOfCommitsFor(githubEvents) {
-        console.log('getNumberOfCommitsFor()');
         githubEvents.forEach(function(githubEvent) {
             var commits = githubEvent.payload.commits.length;
             commitCount += commits;
             console.log(githubEvent, commits);
         }); 
-    };
+    }
 
-    function getNumberOfPushCommitsForUser(userName) {
-        console.log('getNumberOfPushCommitsForUser()');
-        $user.html(userName);
-        var deferredObjects = [];
-        for (var pageNumber = 1; pageNumber <= MAX_PAGES; pageNumber++) {
-            deferredObjects.push(eventAPICallForUserNameAndPageNumber(userName, pageNumber));
-        }
-        return deferredObjects
-    };
+    function updateCommitCount() {
+        $commits.html(commitCount);
+    }
 
 });

@@ -12,9 +12,9 @@ $(function() {
     var $updateButton = $('[data-js-hook="update"]');
 
     $updateButton.click(function() {
-        var defferedObjects = sendAjaxRequestsForGithubUserEvents(getUserName());
+        var deferredObjects = sendAjaxRequestsForGithubUserEvents(getUserName());
         initialize();
-        $.when.apply($, defferedObjects).done(updateCommitCount);  
+        $.when.apply($, deferredObjects).done(updateCommitCount);  
     });
 
     function initialize() {

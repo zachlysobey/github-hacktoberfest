@@ -1,50 +1,65 @@
 
-$(function(){
-    var MAX_PAGES = 10; // 10 is the max
+$(function() {
 
-    var $user = $('[data-js-hook="user"]');
-    var $commits = $('[data-js-hook="commits"]');
-    var $userInput = $('[name="user"]');
-    var $updateButton = $('[data-js-hook="update"]');
-    var $output = $('[data-js-hook="output"]');
-
+    /**
+     * 10 is the maximimum pagination of events endpoint. 
+     * With 30 results each, no more than 300 events can be processed 
+     */
+    var MAX_PAGES = 10; 
+    
     var commitCount = 0;
+    
+    var $updateButton = $('[data-js-hook="update"]');
 
     $updateButton.click(function() {
-        commitCount = 0;
-        $output.show();
-        console.log('updateButton clicked');
-        $.when.apply($, getNumberOfPushCommitsForUser(getUserName())).done(function(){
-            console.log('deffered has resolved', commitCount);
-            $commits.html(commitCount);
-        });  
+        var deferredObjects = sendAjaxRequestsForGithubUserEvents(getUserName());
+        initialize();
+        $.when.apply($, deferredObjects).done(updateCommitCount);  
     });
 
-    function getUserName() {
-        console.log('getUserName()');
-        return $userInput.val();
+    function initialize() {
+        var $output = $('[data-js-hook="output"]');
+        commitCount = 0;
+        $output.show();
     }
 
-    function eventAPICallForUserNameAndPageNumber(name, pageNumber) {
-        console.log('eventAPICallForUserNameAndPageNumber()');
-        var githubApiCall = 'https://api.github.com/users/' + name + '/events/public?page=' + pageNumber;
-        return $.ajax({ url: githubApiCall }).success(function(response){
+    function sendAjaxRequestsForGithubUserEvents() {
+        var deferredObjects = [];
+        for (var pageNumber = 1; pageNumber <= MAX_PAGES; pageNumber++) {
+            deferredObjects.push(eventAPICallForUserNameAndPageNumber(pageNumber));
+        }
+        return deferredObjects
+    }
+
+    function eventAPICallForUserNameAndPageNumber(pageNumber) {      
+        return $.ajax(buildGithubApiCallUrl(pageNumber)).success(function(response){
             var pushEvents = filterEventsByType(response, 'PushEvent');
             var pushEventsByDate = filterEventsByDate(pushEvents, '2014-10');
             getNumberOfCommitsFor(pushEventsByDate);
         });
-    };
+    }
+
+    function buildGithubApiCallUrl(pageNumber) {
+        return 'https://api.github.com/users/' + getUserName() + '/events/public?page=' + pageNumber;
+    }
+
+    function getUserName() {
+        var $user = $('[data-js-hook="user"]');
+        var $userInput = $('[name="user"]');
+        var userName = $userInput.val()
+        $user.html(userName);
+        return userName;
+    }
 
     function filterEventsByType(events, eventType) {
-        console.log('filterEventsByType()');
         var filterEvents = []
-        $.grep(events, function(n) {
-            if (n['type'] === eventType){
-                filterEvents.push(n)
+        $.grep(events, function(event) {
+            if (event['type'] === eventType) {
+                filterEvents.push(event);
             };
         }); 
         return filterEvents
-    };
+    }
 
     function filterEventsByDate(events, eventDate) {
         var filterEvents = [];
@@ -57,22 +72,15 @@ $(function(){
     };
 
     function getNumberOfCommitsFor(githubEvents) {
-        console.log('getNumberOfCommitsFor()');
         githubEvents.forEach(function(githubEvent) {
             var commits = githubEvent.payload.commits.length;
             commitCount += commits;
             console.log(githubEvent, commits);
         }); 
-    };
+    }
 
-    function getNumberOfPushCommitsForUser(userName) {
-        console.log('getNumberOfPushCommitsForUser()');
-        $user.html(userName);
-        var deferredObjects = [];
-        for (var pageNumber = 1; pageNumber <= MAX_PAGES; pageNumber++) {
-            deferredObjects.push(eventAPICallForUserNameAndPageNumber(userName, pageNumber));
-        }
-        return deferredObjects
-    };
-
+    function updateCommitCount() {
+        var $commits = $('[data-js-hook="commits"]');
+        $commits.html(commitCount);
+    }
 });

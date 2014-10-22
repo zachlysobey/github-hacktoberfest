@@ -29,8 +29,9 @@ $(function(){
         console.log('eventAPICallForUserNameAndPageNumber()');
         var githubApiCall = 'https://api.github.com/users/' + name + '/events/public?page=' + pageNumber;
         return $.ajax({ url: githubApiCall }).success(function(response){
-            var pushEvents = filterEventsByType(response, 'PushEvent')
-            getNumberOfCommitsFor(pushEvents);
+            var pushEvents = filterEventsByType(response, 'PushEvent');
+            var pushEventsByDate = filterEventsByDate(pushEvents, '2014-10');
+            getNumberOfCommitsFor(pushEventsByDate);
         });
     };
 
@@ -43,6 +44,16 @@ $(function(){
             };
         }); 
         return filterEvents
+    };
+
+    function filterEventsByDate(events, eventDate) {
+        var filterEvents = [];
+        $.grep(events, function(n) {
+            if (n['created_at'].substr(0, eventDate.length) === eventDate){
+                filterEvents.push(n);
+            };
+        });
+        return filterEvents;
     };
 
     function getNumberOfCommitsFor(githubEvents) {

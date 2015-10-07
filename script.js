@@ -1,4 +1,3 @@
-
 $(function() {
 
     /**
@@ -7,7 +6,7 @@ $(function() {
      */
     var MAX_PAGES = 10;
     
-    var commitCount = 0;
+    var pullCount = 0;
     
     var $updateButton = $('[data-js-hook="update"]');
 
@@ -19,7 +18,7 @@ $(function() {
 
     function initialize() {
         var $output = $('[data-js-hook="output"]');
-        commitCount = 0;
+        pullCount = 0;
         $output.show();
     }
 
@@ -33,9 +32,11 @@ $(function() {
 
     function eventAPICallForUserNameAndPageNumber(pageNumber) {      
         return $.ajax(buildGithubApiCallUrl(pageNumber)).success(function(response){
-            var pushEvents = filterEventsByType(response, 'PullRequestEvent');
-            var pushEventsByDate = filterEventsByDate(pushEvents, '2015-10');
-            getNumberOfCommitsFor(pushEventsByDate);
+            var pullEvents = filterEventsByType(response, 'PullRequestEvent');
+            var pullEvents2 = filterEventsByAction(pullEvents, 'opened');
+            var pullEventsByDate = filterEventsByDate(pullEvents2, '2015-10');
+            pullCount = pullEventsByDate.length;
+            //getNumberOfCommitsFor(pullEventsByDate);
         });
     }
 
@@ -60,6 +61,16 @@ $(function() {
         }); 
         return filterEvents
     }
+    
+    function filterEventsByAction(events, actionType) {
+        var filterEvents = []
+        $.grep(events, function(event) {
+            if (event.payload.action === actionType) {
+                filterEvents.push(event);
+            };
+        }); 
+        return filterEvents
+    }
 
     function filterEventsByDate(events, eventDate) {
         var filterEvents = [];
@@ -70,7 +81,8 @@ $(function() {
         });
         return filterEvents;
     };
-
+    
+    /*
     function getNumberOfCommitsFor(githubEvents) {
         githubEvents.forEach(function(githubEvent) {
             var commits = githubEvent.payload.commits.length;
@@ -78,6 +90,7 @@ $(function() {
             console.log(githubEvent, commits);
         }); 
     }
+    */
 
     function updateCommitCount() {
         var $commits = $('[data-js-hook="commits"]');

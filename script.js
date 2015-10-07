@@ -94,6 +94,6 @@ $(function() {
 
     function updateCommitCount() {
         var $commits = $('[data-js-hook="commits"]');
-        $commits.html(commitCount);
+        $commits.html(pullCount);
     }
 });

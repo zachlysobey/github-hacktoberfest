@@ -5,7 +5,7 @@ $(function() {
      * 10 is the maximimum pagination of events endpoint. 
      * With 30 results each, no more than 300 events can be processed 
      */
-    var MAX_PAGES = 10; 
+    var MAX_PAGES = 10;
     
     var commitCount = 0;
     
@@ -33,8 +33,8 @@ $(function() {
 
     function eventAPICallForUserNameAndPageNumber(pageNumber) {      
         return $.ajax(buildGithubApiCallUrl(pageNumber)).success(function(response){
-            var pushEvents = filterEventsByType(response, 'PushEvent');
-            var pushEventsByDate = filterEventsByDate(pushEvents, '2014-10');
+            var pushEvents = filterEventsByType(response, 'PullRequestEvent');
+            var pushEventsByDate = filterEventsByDate(pushEvents, '2015-10');
             getNumberOfCommitsFor(pushEventsByDate);
         });
     }

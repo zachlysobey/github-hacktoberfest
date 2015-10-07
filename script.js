@@ -27,7 +27,7 @@ $(function() {
         for (var pageNumber = 1; pageNumber <= MAX_PAGES; pageNumber++) {
             deferredObjects.push(eventAPICallForUserNameAndPageNumber(pageNumber));
         }
-        return deferredObjects
+        return deferredObjects;
     }
 
     function eventAPICallForUserNameAndPageNumber(pageNumber) {      
@@ -35,7 +35,7 @@ $(function() {
             var pullEvents = filterEventsByType(response, 'PullRequestEvent');
             var pullEvents2 = filterEventsByAction(pullEvents, 'opened');
             var pullEventsByDate = filterEventsByDate(pullEvents2, '2015-10');
-            pullCount = pullEventsByDate.length;
+            pullCount += pullEventsByDate.length;
             //getNumberOfCommitsFor(pullEventsByDate);
         });
     }

@@ -13,7 +13,7 @@ $(function() {
     $updateButton.click(function() {
         var deferredObjects = sendAjaxRequestsForGithubUserEvents(getUserName());
         initialize();
-        $.when.apply($, deferredObjects).done(updateCommitCount);  
+        $.when.apply($, deferredObjects).done(updatePullCount);  
     });
 
     function initialize() {
@@ -36,7 +36,6 @@ $(function() {
             var pullEvents2 = filterEventsByAction(pullEvents, 'opened');
             var pullEventsByDate = filterEventsByDate(pullEvents2, '2015-10');
             pullCount += pullEventsByDate.length;
-            //getNumberOfCommitsFor(pullEventsByDate);
         });
     }
 
@@ -81,19 +80,9 @@ $(function() {
         });
         return filterEvents;
     };
-    
-    /*
-    function getNumberOfCommitsFor(githubEvents) {
-        githubEvents.forEach(function(githubEvent) {
-            var commits = githubEvent.payload.commits.length;
-            commitCount += commits;
-            console.log(githubEvent, commits);
-        }); 
-    }
-    */
 
-    function updateCommitCount() {
-        var $commits = $('[data-js-hook="commits"]');
-        $commits.html(pullCount);
+    function updatePullCount() {
+        var $pulls = $('[data-js-hook="pulls"]');
+        $pulls.html(pullCount);
     }
 });

@@ -22,6 +22,10 @@ From that post:
 
 These new requirements render this project __obsolete__.
 
+For the 2015 hacktoberfest use the following verification tool to see if you have enough PR's:
+
+http://hf.heidilabs.com/#
+
 ### Current Status
 This project let the end user type in a gitHub username
 and find out if s/he is eligible to win a free T-shirt from Digital Ocean,

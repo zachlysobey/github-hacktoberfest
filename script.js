@@ -10,11 +10,24 @@ $(function() {
     
     var $updateButton = $('[data-js-hook="update"]');
 
+    var $input = $('[name="user"]')
+
+    $input.focus()
+
     $updateButton.click(function() {
+        getUserPullRequests()
+    });
+
+    $input.keypress(function(e){
+        e.which === 13 && getUserPullRequests()
+    })
+
+    function getUserPullRequests(){
+        pullCount = 0
         var deferredObjects = sendAjaxRequestsForGithubUserEvents(getUserName());
         initialize();
         $.when.apply($, deferredObjects).done(updatePullCount);  
-    });
+    }
 
     function initialize() {
         var $output = $('[data-js-hook="output"]');
@@ -45,7 +58,7 @@ $(function() {
 
     function getUserName() {
         var $user = $('[data-js-hook="user"]');
-        var $userInput = $('[name="user"]');
+        var $userInput = $input;
         var userName = $userInput.val()
         $user.html(userName);
         return userName;

@@ -5,6 +5,7 @@
  - KrishnaRSampath
  - mconklin
  - AmundsenJunior
+ -patrick1378
 
 ## 2015 Event
 

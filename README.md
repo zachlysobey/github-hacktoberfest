@@ -5,6 +5,7 @@
  - KrishnaRSampath
  - mconklin
  - AmundsenJunior
+ -patrick1378
 
 ## 2015 Event
 
@@ -22,7 +23,7 @@ From that post:
 
 These new requirements render this project __obsolete__.
 
-For the 2015 hacktoberfest use the following verification tool to see if you have enough PR's:
+For the 2015 hacktoberfest use the following verification tool to see if you have enough PR's;
 
 http://hf.heidilabs.com/#
 
